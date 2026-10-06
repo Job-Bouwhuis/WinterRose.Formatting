@@ -4,9 +4,9 @@ using WinterRose.Formatting.Paths;
 using WinterRose.Formatting.TimeFormats;
 
 DateTime processStarted = DateTime.Now.AddDays(-1);
-Console.WriteLine(DateFormatter.Format(processStarted, "relative"));
+Console.WriteLine(DateFormatter.Format(processStarted, "relative")); // yesterday
 
-Console.WriteLine(DateFormatter.Format(DateTime.Now,
+Console.WriteLine(DateFormatter.Format(DateTime.Now, // Today is Tuesday. Spooky day to you! (its currently tuesday 6th october at time of writing)
     """
     Today is @weekday. ;month {
         12: "Merry Christmas!",
@@ -15,15 +15,16 @@ Console.WriteLine(DateFormatter.Format(DateTime.Now,
     }
     """));
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "m+ h+"));
+Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "m+ h+")); // 90m 0h
+Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "h+ m+")); // 1h 30m
 
 
 Console.WriteLine("Color:");
-Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Hex));
-Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Rgb));
-Console.WriteLine(ColorFormatter.Format(255, 128, 0, 128, ColorFormatKind.Rgba));
-Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Hsl));
-Console.WriteLine(ColorFormatter.Format(255, 128, 0, 128, ColorFormatKind.Hsla));
+Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Hex)); // #FF8000
+Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Rgb)); // rgb(255, 128, 0)
+Console.WriteLine(ColorFormatter.Format(255, 128, 0, 128, ColorFormatKind.Rgba)); // rgba(255, 128, 0, 0.5)
+Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Hsl)); // hsl(30, 100%, 50%)
+Console.WriteLine(ColorFormatter.Format(255, 128, 0, 128, ColorFormatKind.Hsla)); // hsla(30, 100%, 50%, 0.5)
 
 Console.WriteLine("\nPaths:");
 string executable = Environment.ProcessPath!;
@@ -31,7 +32,7 @@ string executable = Environment.ProcessPath!;
 Console.WriteLine($"Original : {executable}");
 Console.WriteLine();
 
-Console.WriteLine(PathFormatter.Format(executable, 120));
+Console.WriteLine(PathFormatter.Format(executable, 120)); 
 Console.WriteLine(PathFormatter.Format(executable, 80));
 Console.WriteLine(PathFormatter.Format(executable, 40));
 Console.WriteLine(PathFormatter.Format(executable, 20));
@@ -42,14 +43,27 @@ Console.WriteLine(PathFormatter.Format(executable, 60,
                                         PathFormatOptions.TruncateFromMiddle |
                                         PathFormatOptions.IncludeRoot));
 
+/*
+ output from above code will look like this (on Windows):
+Original : D:\GitRepositories\Personal\WinterRose.Formatting\WinterRose.Formatting.Tests\bin\Debug\net10.0\WinterRose.Formatting.Tests.exe
+
+D:/GitRepositories/Personal/WinterRose.Formatting/.../WinterRose.Formatting.Tests.exe
+D:/.../WinterRose.Formatting.Tests.exe
+.../WinterRose.Formatting.Tests.exe
+.../WinterRose.Formatting.Tests.exe
+WinterRose.Formatting.Tests.exe
+D:\GitRepositories\Personal\WinterRose.Formatting\WinterRose.Formatting.Tests\bin\Debug\net10.0
+D:/.../WinterRose.Formatting.Tests.exe
+ */
+
 Console.WriteLine("\nNumbers:");
-Console.WriteLine(NumberFormatter.Compact(1532));
-Console.WriteLine(NumberFormatter.Compact(834525123));
-Console.WriteLine(NumberFormatter.Human(2500000));
-Console.WriteLine(NumberFormatter.FileSize(1536));
-Console.WriteLine(NumberFormatter.FileSize(1536, binary: true));
-Console.WriteLine(NumberFormatter.Roman(42));
-Console.WriteLine(NumberFormatter.Roman(3999));
+Console.WriteLine(NumberFormatter.Compact(1532)); // 1.53K
+Console.WriteLine(NumberFormatter.Compact(834525123)); // 834.53M
+Console.WriteLine(NumberFormatter.Human(2500000)); // 2.5 million
+Console.WriteLine(NumberFormatter.FileSize(1536)); // 1.54 KB
+Console.WriteLine(NumberFormatter.FileSize(1536, binary: true)); // 1.50 KiB
+Console.WriteLine(NumberFormatter.Roman(42)); // XLII
+Console.WriteLine(NumberFormatter.Roman(3999)); // MMMCMXCIX
 
 Console.WriteLine("\nDurations");
 Console.WriteLine(DurationFormat.Format(TimeSpan.FromDays(3.5), "d"));                // 3
@@ -214,3 +228,59 @@ Console.WriteLine(DateFormatter.Format(
     now.AddDays(2),
     "<1m?relative:<1h?relative[short]:datetime[yyyy-MM-dd HH:mm]",
     now));
+
+
+/*
+ output from above date formatting code will look like this (assuming now is 2026-10-05 12:00:00):
+=== Relative ===
+30 seconds ago
+5 minutes ago
+in 2 hours
+in 3 days
+
+=== Relative (Short) ===
+30s ago
+5m ago
+in 2h
+in 3d
+
+=== Calendar Aware ===
+yesterday
+today
+tomorrow
+
+=== No Calendar ===
+1 day ago
+just now
+in 1 day
+
+=== Absolute Date Formats ===
+2026-10-05
+maandag, 05 oktober 2026
+
+=== Absolute Time Formats ===
+12:00:00
+12:00
+
+=== Absolute DateTime Formats ===
+2026-10-05 12:00:00
+05 okt 2026 12:00
+
+=== Duration Conditions ===
+today
+2026-10-05 17:00
+in 3 days
+2026-11-04
+
+=== Keyword Conditions ===
+today
+today
+today
+tomorrow
+yesterday
+
+=== Nested Conditions ===
+today
+today
+2026-10-07 12:00
+*/
