@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 namespace WinterRose.Formatting.TimeFormats;
 
@@ -299,425 +300,59 @@ public static class DateFormatter
     /// </code>
     /// </example>
     /// </remarks>
-    public static string Format(DateTime value, string format, DateTime now)
-    {
-        DateFormatNode node = new DateFormatParser().Parse(format);
-        return FormatNode(value, node, now);
-    }
-
-    private static ConditionalNode ParseConditional(
-    string format,
-    ref int position)
-    {
-        DateCondition condition = ParseCondition(
-            format,
-            ref position);
-
-        if (position >= format.Length ||
-            format[position] != '?')
-        {
-            throw new FormatException(
-                "Expected '?' after date condition.");
-        }
-
-        position++;
-
-        DateFormatNode whenTrue = ParseBranch(
-            format,
-            ref position);
-
-        if (position >= format.Length ||
-            format[position] != ':')
-        {
-            throw new FormatException(
-                "Expected ':' between conditional branches.");
-        }
-
-        position++;
-
-        DateFormatNode whenFalse = ParseBranch(
-            format,
-            ref position);
-
-        return new ConditionalNode(
-            condition,
-            whenTrue,
-            whenFalse);
-    }
-
-    private static DateCondition ParseCondition(
-        string format,
-        ref int position)
-    {
-        int conditionStart = position;
-
-        while (position < format.Length &&
-               format[position] != '?')
-        {
-            position++;
-        }
-
-        if (position >= format.Length)
-            throw new FormatException(
-                "Expected '?' after date condition.");
-
-        string condition = format[conditionStart..position].Trim();
-
-        if (string.IsNullOrWhiteSpace(condition))
-            throw new FormatException(
-                "Date condition cannot be empty.");
-
-        if (TryParseKeywordCondition(
-                condition,
-                out KeywordCondition? keyword))
-        {
-            return keyword;
-        }
-
-        if (TryParseDurationCondition(
-                condition,
-                out DurationCondition? duration))
-        {
-            return duration;
-        }
-
-        throw new FormatException(
-            $"Unknown date condition '{condition}'.");
-    }
-
-    private static bool TryParseKeywordCondition(
-        string condition,
-        out KeywordCondition? result)
-    {
-        result = condition.ToLowerInvariant() switch
-        {
-            "past" => new KeywordCondition("past"),
-            "future" => new KeywordCondition("future"),
-            "today" => new KeywordCondition("today"),
-            "tomorrow" => new KeywordCondition("tomorrow"),
-            "yesterday" => new KeywordCondition("yesterday"),
-            _ => null
-        };
-
-        return result is not null;
-    }
-
-    private static DateFormatNode ParseFormatter(
-    string format,
-    ref int position)
-    {
-        int start = position;
-
-        while (position < format.Length &&
-               format[position] != ':' &&
-               format[position] != '?')
-        {
-            position++;
-        }
-
-        string formatter = format[start..position].Trim();
-
-        if (string.IsNullOrWhiteSpace(formatter))
-            throw new FormatException(
-                "Date formatter cannot be empty.");
-
-        if (formatter.Equals("relative", StringComparison.OrdinalIgnoreCase))
-            return new RelativeNode(false, true);
-
-        if (formatter.StartsWith(
-        "relative[",
-        StringComparison.OrdinalIgnoreCase))
-        {
-            if (!formatter.EndsWith(']'))
-                throw new FormatException(
-                    $"Invalid relative formatter '{formatter}'.");
-
-            string options = formatter[
-                "relative[".Length..^1];
-
-            bool shortFormat = false;
-            bool calendar = true;
-
-            foreach (string option in options.Split(
-                         ',',
-                         StringSplitOptions.RemoveEmptyEntries |
-                         StringSplitOptions.TrimEntries))
-            {
-                switch (option.ToLowerInvariant())
-                {
-                    case "short":
-                        shortFormat = true;
-                        break;
-
-                    case "no-calendar":
-                        calendar = false;
-                        break;
-
-                    default:
-                        throw new FormatException(
-                            $"Unknown relative formatter option '{option}'.");
-                }
-            }
-
-            return new RelativeNode(
-                shortFormat,
-                calendar);
-        }
-
-        if (formatter.StartsWith(
-                "relative[",
-                StringComparison.OrdinalIgnoreCase))
-        {
-            if (!formatter.EndsWith(']'))
-                throw new FormatException(
-                    $"Invalid relative formatter '{formatter}'.");
-
-            string options = formatter[
-                "relative[".Length..^1];
-
-            bool shortFormat = false;
-            bool calendar = true;
-
-            foreach (string option in options.Split(
-                         ',',
-                         StringSplitOptions.RemoveEmptyEntries |
-                         StringSplitOptions.TrimEntries))
-            {
-                switch (option.ToLowerInvariant())
-                {
-                    case "short":
-                        shortFormat = true;
-                        break;
-
-                    case "no-calendar":
-                        calendar = false;
-                        break;
-
-                    default:
-                        throw new FormatException(
-                            $"Unknown relative formatter option '{option}'.");
-                }
-            }
-
-            return new RelativeNode(shortFormat, calendar);
-        }
-
-        if (TryParseFormatterWithFormat(
-                formatter,
-                "date",
-                out DateFormatNode? date))
-        {
-            return date;
-        }
-
-        if (TryParseFormatterWithFormat(
-                formatter,
-                "time",
-                out DateFormatNode? time))
-        {
-            return time;
-        }
-
-        if (TryParseFormatterWithFormat(
-                formatter,
-                "datetime",
-                out DateFormatNode? dateTime))
-        {
-            return dateTime;
-        }
-
-        throw new FormatException(
-            $"Unknown date formatter '{formatter}'.");
-    }
-
-    private static TimeSpan ParseDuration(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new FormatException(
-                "Duration condition requires a duration value.");
-
-        int unitStart = value.Length;
-
-        while (unitStart > 0 &&
-               char.IsLetter(value[unitStart - 1]))
-        {
-            unitStart--;
-        }
-
-        if (unitStart == 0 ||
-            unitStart == value.Length)
-        {
-            throw new FormatException(
-                $"Invalid duration '{value}'.");
-        }
-
-        string amountText = value[..unitStart];
-        string unit = value[unitStart..].ToLowerInvariant();
-
-        if (!double.TryParse(
-                amountText,
-                NumberStyles.Float,
-                CultureInfo.InvariantCulture,
-                out double amount))
-        {
-            throw new FormatException(
-                $"Invalid duration amount '{amountText}'.");
-        }
-
-        return unit switch
-        {
-            "ms" => TimeSpan.FromMilliseconds(amount),
-            "s" => TimeSpan.FromSeconds(amount),
-            "m" => TimeSpan.FromMinutes(amount),
-            "h" => TimeSpan.FromHours(amount),
-            "d" => TimeSpan.FromDays(amount),
-            "w" => TimeSpan.FromDays(amount * 7),
-            "mo" => TimeSpan.FromDays(amount * 30),
-            "y" => TimeSpan.FromDays(amount * 365),
-
-            _ => throw new FormatException(
-                $"Unknown duration unit '{unit}'.")
-        };
-    }
-
-    private static bool IsConditionalStart(
-    string format,
-    int position)
-    {
-        if (position >= format.Length)
-            return false;
-
-        char character = format[position];
-
-        if (character == '<' ||
-            character == '>')
-        {
-            return true;
-        }
-
-        if (character == '=')
-            return true;
-
-        ReadOnlySpan<char> remaining = format.AsSpan(position);
-
-        return remaining.StartsWith(
-                   "past",
-                   StringComparison.OrdinalIgnoreCase) ||
-               remaining.StartsWith(
-                   "future",
-                   StringComparison.OrdinalIgnoreCase) ||
-               remaining.StartsWith(
-                   "today",
-                   StringComparison.OrdinalIgnoreCase) ||
-               remaining.StartsWith(
-                   "tomorrow",
-                   StringComparison.OrdinalIgnoreCase) ||
-               remaining.StartsWith(
-                   "yesterday",
-                   StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static bool TryParseDurationCondition(
-    string condition,
-    out DurationCondition? result)
-    {
-        result = null;
-
-        DateComparison comparison;
-
-        string durationText;
-
-        if (condition.StartsWith("<="))
-        {
-            comparison = DateComparison.LessThanOrEqual;
-            durationText = condition[2..];
-        }
-        else if (condition.StartsWith(">="))
-        {
-            comparison = DateComparison.GreaterThanOrEqual;
-            durationText = condition[2..];
-        }
-        else if (condition.StartsWith('<'))
-        {
-            comparison = DateComparison.LessThan;
-            durationText = condition[1..];
-        }
-        else if (condition.StartsWith('>'))
-        {
-            comparison = DateComparison.GreaterThan;
-            durationText = condition[1..];
-        }
-        else if (condition.StartsWith('='))
-        {
-            comparison = DateComparison.Equal;
-            durationText = condition[1..];
-        }
-        else
-        {
-            return false;
-        }
-
-        TimeSpan duration = ParseDuration(durationText);
-
-        result = new DurationCondition(
-            comparison,
-            duration);
-
-        return true;
-    }
-
-    private static bool TryParseFormatterWithFormat(
-    string formatter,
-    string name,
-    out DateFormatNode? result)
-    {
-        result = null;
-
-        string prefix = $"{name}[";
-
-        if (!formatter.StartsWith(
-                prefix,
-                StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (!formatter.EndsWith(']'))
-            throw new FormatException(
-                $"Formatter '{name}' is missing its closing ']'.");
-
-        string value = formatter[
-            prefix.Length..^1];
-
-        if (string.IsNullOrEmpty(value))
-            throw new FormatException(
-                $"Formatter '{name}' requires a format string.");
-
-        result = name switch
-        {
-            "date" => new DateNode(value),
-            "time" => new TimeNode(value),
-            "datetime" => new DateTimeNode(value),
-            _ => throw new InvalidOperationException()
-        };
-
-        return true;
-    }
-
-    private static DateFormatNode ParseBranch(
-        string format,
-        ref int position)
-    {
-        return IsConditionalStart(format, position)
-            ? ParseConditional(format, ref position)
-            : ParseFormatter(format, ref position);
-    }
-
-    private static string FormatNode(
+    public static string Format(
         DateTime value,
-        DateFormatNode node,
+        string format,
         DateTime now)
     {
+        DateFormatNode node = new DateFormatParser().Parse(format);
+
+        return FormatNode(
+            value,
+            node,
+            now);
+    }
+
+    private static string FormatWeekOfYear(DateTime value)
+    {
+        int week = ISOWeek.GetWeekOfYear(value);
+        return $"Week {week}";
+    }
+    private static string FormatQuarter(DateTime value, QuarterNode options)
+    {
+        int quarter = ((value.Month - 1) / 3) + 1;
+
+        return options.ShortFormat
+            ? $"Q{quarter}"
+            : $"Quarter {quarter}";
+    }
+
+    private static string FormatNode(DateTime value, DateFormatNode node, DateTime now)
+    {
+        if (node is SwitchNode switchNode)
+        {
+            object variableValue = DateVariables.Evaluate(switchNode.Variable, value);
+
+            if (switchNode.Cases.TryGetValue(variableValue, out DateFormatNode? branch))
+                return FormatNode(value, branch, now);
+
+            return FormatNode(value, switchNode.Default, now);
+        }
+
+        if (node is VariableNode variable)
+            return Convert.ToString(
+                DateVariables.Evaluate(variable.Name, value), CultureInfo.InvariantCulture) ?? string.Empty;
+
+        if (node is SequenceNode sequence)
+        {
+            StringBuilder result = new();
+
+            foreach (DateFormatNode child in sequence.Nodes)
+                result.Append(FormatNode(value, child, now));
+
+            return result.ToString();
+        }
+
         return node switch
         {
             RelativeNode relative => FormatRelative(value, now, relative),
@@ -725,15 +360,53 @@ public static class DateFormatter
             TimeNode time => value.ToString(time.Format, CultureInfo.CurrentCulture),
             DateTimeNode dateTime => value.ToString(dateTime.Format, CultureInfo.CurrentCulture),
             ConditionalNode conditional => FormatConditional(value, conditional, now),
+            WeekOfYearNode => FormatWeekOfYear(value),
+            QuarterNode quarter => FormatQuarter(value, quarter),
+            TextNode text => text.Text,
             _ => throw new InvalidOperationException(
                 $"Unknown date format node '{node.GetType().Name}'.")
         };
     }
 
-    private static string FormatConditional(
-    DateTime value,
-    ConditionalNode node,
-    DateTime now)
+    private static bool EvaluateDatePartCondition(
+        DateTime value,
+        DatePartCondition condition)
+    {
+        object actual =
+            DateVariables.Evaluate(
+                condition.Part.ToLowerInvariant(),
+                value);
+
+        if (actual is not IComparable comparable)
+        {
+            throw new FormatException(
+                $"Date variable '{condition.Part}' is not comparable.");
+        }
+
+        int comparison = comparable.CompareTo(condition.Value);
+
+        return condition.Comparison switch
+        {
+            DateComparison.LessThan =>
+                comparison < 0,
+
+            DateComparison.LessThanOrEqual =>
+                comparison <= 0,
+
+            DateComparison.GreaterThan =>
+                comparison > 0,
+
+            DateComparison.GreaterThanOrEqual =>
+                comparison >= 0,
+
+            DateComparison.Equal =>
+                comparison == 0,
+
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private static string FormatConditional(DateTime value, ConditionalNode node, DateTime now)
     {
         if (EvaluateCondition(value, node.Condition, now))
             return FormatNode(value, node.WhenTrue, now);
@@ -741,24 +414,19 @@ public static class DateFormatter
         return FormatNode(value, node.WhenFalse, now);
     }
 
-    private static bool EvaluateCondition(
-        DateTime value,
-        DateCondition condition,
-        DateTime now)
+    private static bool EvaluateCondition(DateTime value, DateCondition condition, DateTime now)
     {
         return condition switch
         {
             DurationCondition duration => EvaluateDurationCondition(value, duration, now),
             KeywordCondition keyword => EvaluateKeywordCondition(value, keyword, now),
+            DatePartCondition datePart => EvaluateDatePartCondition(value, datePart),
             _ => throw new InvalidOperationException(
                 $"Unknown date condition '{condition.GetType().Name}'.")
         };
     }
 
-    private static bool EvaluateDurationCondition(
-        DateTime value,
-        DurationCondition condition,
-        DateTime now)
+    private static bool EvaluateDurationCondition(DateTime value, DurationCondition condition, DateTime now)
     {
         TimeSpan difference = (value - now).Duration();
 
@@ -773,10 +441,7 @@ public static class DateFormatter
         };
     }
 
-    private static bool EvaluateKeywordCondition(
-        DateTime value,
-        KeywordCondition condition,
-        DateTime now)
+    private static bool EvaluateKeywordCondition(DateTime value, KeywordCondition condition, DateTime now)
     {
         return condition.Keyword.ToLowerInvariant() switch
         {
@@ -790,10 +455,7 @@ public static class DateFormatter
         };
     }
 
-    private static string FormatRelative(
-    DateTime value,
-    DateTime now,
-    RelativeNode options)
+    private static string FormatRelative(DateTime value, DateTime now, RelativeNode options)
     {
         TimeSpan difference = value - now;
         bool future = difference > TimeSpan.Zero;
@@ -804,9 +466,7 @@ public static class DateFormatter
             string? calendar = TryFormatCalendar(value, now);
 
             if (calendar is not null)
-                return options.Short
-                    ? calendar
-                    : calendar;
+                return calendar;
         }
 
         if (absolute < TimeSpan.FromSeconds(1))
@@ -845,11 +505,11 @@ public static class DateFormatter
     }
 
     private static string FormatRelativeUnit(
-    double amount,
-    string unit,
-    string shortUnit,
-    bool future,
-    bool shortFormat)
+        double amount,
+        string unit,
+        string shortUnit,
+        bool future,
+        bool shortFormat)
     {
         int value = Math.Max(1, (int)Math.Round(amount));
 
@@ -865,10 +525,7 @@ public static class DateFormatter
             ? $"in {value} {pluralUnit}"
             : $"{value} {pluralUnit} ago";
     }
-
-    private static string? TryFormatCalendar(
-    DateTime value,
-    DateTime now)
+    private static string? TryFormatCalendar(DateTime value, DateTime now)
     {
         DateTime date = value.Date;
         DateTime today = now.Date;

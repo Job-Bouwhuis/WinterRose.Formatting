@@ -1,6 +1,6 @@
 ﻿namespace WinterRose.Formatting.TimeFormats
 {
-    public sealed record DateTimeNode(
+    internal sealed record DateTimeNode(
         string Format
     ) : DateFormatNode;
 }

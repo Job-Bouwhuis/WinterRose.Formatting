@@ -1,4 +1,4 @@
 ﻿namespace WinterRose.Formatting.TimeFormats
 {
-    public abstract record DateCondition;
+    internal abstract record DateCondition;
 }

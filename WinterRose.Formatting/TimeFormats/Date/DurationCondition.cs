@@ -1,6 +1,6 @@
 ﻿namespace WinterRose.Formatting.TimeFormats
 {
-    public sealed record DurationCondition(
+    internal sealed record DurationCondition(
         DateComparison Comparison,
         TimeSpan Duration
     ) : DateCondition;

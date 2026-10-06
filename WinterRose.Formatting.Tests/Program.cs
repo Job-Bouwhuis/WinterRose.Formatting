@@ -1,8 +1,22 @@
-﻿using Microsoft.VisualBasic;
-using WinterRose.Formatting;
+﻿using WinterRose.Formatting;
 using WinterRose.Formatting.Colors;
 using WinterRose.Formatting.Paths;
 using WinterRose.Formatting.TimeFormats;
+
+DateTime processStarted = DateTime.Now.AddDays(-1);
+Console.WriteLine(DateFormatter.Format(processStarted, "relative"));
+
+Console.WriteLine(DateFormatter.Format(DateTime.Now,
+    """
+    Today is @weekday. ;month {
+        12: "Merry Christmas!",
+        10: "Spooky day to you!",
+        default: "Have a nice day."
+    }
+    """));
+
+Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "m+ h+"));
+
 
 Console.WriteLine("Color:");
 Console.WriteLine(ColorFormatter.Format(255, 128, 0, ColorFormatKind.Hex));

@@ -1,6 +1,6 @@
 ﻿namespace WinterRose.Formatting.TimeFormats
 {
-    public sealed record KeywordCondition(
+    internal sealed record KeywordCondition(
         string Keyword
     ) : DateCondition;
 }

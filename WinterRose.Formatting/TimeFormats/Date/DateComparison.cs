@@ -1,6 +1,6 @@
 ﻿namespace WinterRose.Formatting.TimeFormats
 {
-    public enum DateComparison
+    internal enum DateComparison
     {
         LessThan,
         LessThanOrEqual,

@@ -1,4 +1,4 @@
 ﻿namespace WinterRose.Formatting.TimeFormats
 {
-    public abstract record DateFormatNode;
+    internal abstract record DateFormatNode;
 }
