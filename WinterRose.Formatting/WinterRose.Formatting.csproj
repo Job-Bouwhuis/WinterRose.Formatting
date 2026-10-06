@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>WinterRose.Formatting</Title>
+    <Version>26.3.1</Version>
+    <Authors>TheSnowOwl</Authors>
+    <Company>WinterRose</Company>
+    <Description>A small library providing formatters to make DateTime, TimeSpan, numbers, colors, and paths better readable for humans</Description>
+    <Copyright>WinterRose</Copyright>
+    <PackageProjectUrl>https://github.com/Job-Bouwhuis/WinterRose.Formatting</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Job-Bouwhuis/WinterRose.Formatting</RepositoryUrl>
+    <PackageTags>formatting</PackageTags>
+    <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

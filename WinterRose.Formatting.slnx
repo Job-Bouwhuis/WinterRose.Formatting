@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WinterRose.Formatting.Tests/WinterRose.Formatting.Tests.csproj" />
+  <Project Path="WinterRose.Formatting/WinterRose.Formatting.csproj" />
+</Solution>
