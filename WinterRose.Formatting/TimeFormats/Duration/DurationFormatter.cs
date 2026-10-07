@@ -137,7 +137,7 @@ namespace WinterRose.Formatting.TimeFormats;
 /// rather than a decomposed clock-style duration.
 /// </para>
 /// </remarks>
-public static class DurationFormat
+public static class DurationFormatter
 {
     /// <summary>
     /// Formats a <see cref="TimeSpan"/> value using the specified duration

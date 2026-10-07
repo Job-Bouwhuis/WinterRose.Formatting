@@ -15,8 +15,8 @@ Console.WriteLine(DateFormatter.Format(DateTime.Now, // Today is Tuesday. Spooky
     }
     """));
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "m+ h+")); // 90m 0h
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "h+ m+")); // 1h 30m
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(1.5), "m+ h+")); // 90m 0h
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(1.5), "h+ m+")); // 1h 30m
 
 
 Console.WriteLine("Color:");
@@ -66,58 +66,58 @@ Console.WriteLine(NumberFormatter.Roman(42)); // XLII
 Console.WriteLine(NumberFormatter.Roman(3999)); // MMMCMXCIX
 
 Console.WriteLine("\nDurations");
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromDays(3.5), "d"));                // 3
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromDays(3.5), "dd"));               // 03
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromDays(3.5), "d"));                // 3
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromDays(3.5), "dd"));               // 03
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "h"));               // 1
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "hh"));              // 01
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(1.5), "h"));               // 1
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(1.5), "hh"));              // 01
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMinutes(90), "m"));              // 90
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMinutes(90), "mm"));             // 90
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMinutes(90), "m"));              // 90
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMinutes(90), "mm"));             // 90
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromSeconds(1.2345678), "s.f"));     // 1.2
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromSeconds(1.2345678), "s.fff"));   // 1.234
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromSeconds(1.2000000), "s.FFF"));   // 1.2
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromSeconds(1.2345678), "s.f"));     // 1.2
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromSeconds(1.2345678), "s.fff"));   // 1.234
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromSeconds(1.2000000), "s.FFF"));   // 1.2
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMilliseconds(123.456), "ms"));       // 123
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMilliseconds(123.456), "ms.fff"));   // 123.456
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMilliseconds(123.456), "ms"));       // 123
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMilliseconds(123.456), "ms.fff"));   // 123.456
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromTicks(12345), "us"));            // 1234
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromTicks(12345), "us.f"));          // 1234.5
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromTicks(12345), "us"));            // 1234
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromTicks(12345), "us.f"));          // 1234.5
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromTicks(123), "ns"));              // 12300
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromTicks(123), "ns"));              // 12300
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1.5), "h+"));              // 1.5h
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMinutes(91), "m+"));             // 90m
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMilliseconds(25), "ms+"));       // 25ms
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(1.5), "h+"));              // 1.5h
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMinutes(91), "m+"));             // 90m
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMilliseconds(25), "ms+"));       // 25ms
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(1), "h++"));               // 1 hour
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(2), "h++"));               // 2 hours
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMilliseconds(1), "ms++"));       // 1 millisecond
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMilliseconds(2), "ms++"));       // 2 milliseconds
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(1), "h++"));               // 1 hour
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(2), "h++"));               // 2 hours
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMilliseconds(1), "ms++"));       // 1 millisecond
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMilliseconds(2), "ms++"));       // 2 milliseconds
 
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromMinutes(30), "[h++] [m++]"));     // 30 minutes
-Console.WriteLine(DurationFormat.Format(TimeSpan.FromHours(2), "[h++] [m++]"));        // 2 hours
-Console.WriteLine(DurationFormat.Format(TimeSpan.Zero, "[h++] [m++] [s++]"));           // ""
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromMinutes(30), "[h++] [m++]"));     // 30 minutes
+Console.WriteLine(DurationFormatter.Format(TimeSpan.FromHours(2), "[h++] [m++]"));        // 2 hours
+Console.WriteLine(DurationFormatter.Format(TimeSpan.Zero, "[h++] [m++] [s++]"));           // ""
 
-Console.WriteLine(DurationFormat.Format(
+Console.WriteLine(DurationFormatter.Format(
     TimeSpan.FromSeconds(1.234),
     "s.FFF+"));                                                // 1.234s
 
-Console.WriteLine(DurationFormat.Format(
+Console.WriteLine(DurationFormatter.Format(
     TimeSpan.FromHours(1.5),
     "h++m+"));                                                 // 1.5 hours90m
 
-Console.WriteLine(DurationFormat.Format(
+Console.WriteLine(DurationFormatter.Format(
     TimeSpan.FromDays(2.75),
     "d.fff++"));                                               // 2.750 days
 
 
 TimeSpan value = TimeSpan.FromHours(1.5);
 
-Console.WriteLine(DurationFormat.Format(value, "h++")); // 1.5 hours
-Console.WriteLine(DurationFormat.Format(value, "m++")); // 90 minutes
-Console.WriteLine(DurationFormat.Format(value, "s++")); // 5400 seconds
+Console.WriteLine(DurationFormatter.Format(value, "h++")); // 1.5 hours
+Console.WriteLine(DurationFormatter.Format(value, "m++")); // 90 minutes
+Console.WriteLine(DurationFormatter.Format(value, "s++")); // 5400 seconds
 
 Console.WriteLine("\nDates:");
 
