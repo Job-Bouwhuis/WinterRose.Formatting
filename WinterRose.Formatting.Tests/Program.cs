@@ -1,12 +1,24 @@
-﻿using WinterRose.Formatting;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using WinterRose.Formatting;
 using WinterRose.Formatting.Colors;
+using WinterRose.Formatting.Currency;
+using WinterRose.Formatting.Enums;
 using WinterRose.Formatting.Paths;
 using WinterRose.Formatting.TimeFormats;
+
+Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.JapaneseYen));
+Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.UnitedStatesDollar));
+Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.CzechKoruna));
+Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.DanishKrone));
+Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.CanadianDollar));
+Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.ChineseYuan));
 
 DateTime processStarted = DateTime.Now.AddDays(-1);
 Console.WriteLine(DateFormatter.Format(processStarted, "relative")); // yesterday
 
-Console.WriteLine(DateFormatter.Format(DateTime.Now, // Today is Tuesday. Spooky day to you! (its currently tuesday 6th october at time of writing)
+// Today is Tuesday. Spooky day to you! (its currently tuesday 6th october at time of writing)
+Console.WriteLine(DateFormatter.Format(DateTime.Now, 
     """
     Today is @weekday. ;month {
         12: "Merry Christmas!",
@@ -284,3 +296,22 @@ today
 today
 2026-10-07 12:00
 */
+
+
+Console.WriteLine(SupplierStatus.None.Humanize());
+Console.WriteLine(SupplierStatus.WaitingOnSupplier.Humanize());
+Console.WriteLine(SupplierStatus.QuoteReceived.Humanize());
+Console.WriteLine(SupplierStatus.AwaitingApproval.Humanize());
+Console.WriteLine((SupplierStatus.AwaitingApproval | SupplierStatus.None |SupplierStatus.QuoteReceived).Humanize());
+
+[Flags]
+public enum SupplierStatus
+{
+    None = 0,
+
+    WaitingOnSupplier = 1,
+
+    QuoteReceived = 2,
+
+    AwaitingApproval = 4
+}

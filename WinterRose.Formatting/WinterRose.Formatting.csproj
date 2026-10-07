@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
+	<LangVersion>14</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>WinterRose.Formatting</Title>
-    <Version>26.3.1</Version>
+    <Version>26.3.3</Version>
     <Authors>TheSnowOwl</Authors>
     <Company>WinterRose</Company>
     <Description>A small library providing formatters to make DateTime, TimeSpan, numbers, colors, and paths better readable for humans</Description>
@@ -25,6 +26,10 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WinterRose.TaskLock" Version="26.3.0" />
   </ItemGroup>
 
 </Project>
