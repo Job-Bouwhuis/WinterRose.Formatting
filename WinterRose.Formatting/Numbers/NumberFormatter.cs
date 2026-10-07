@@ -151,4 +151,151 @@ public static class NumberFormatter
 
         return result.ToString();
     }
+
+    /// <summary>
+    /// Formats the given decimal value as a percentage string with the specified number of decimal places.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="decimals"></param>
+    /// <returns></returns>
+    public static string Percentage(decimal value, int decimals = 2)
+    {
+        decimal percentage = value * 100m;
+
+        if (decimals <= 0)
+            return $"{percentage:0}%";
+
+        string decimalPlaces = new('0', decimals);
+        string format = $"0.{decimalPlaces}";
+
+        return $"{percentage.ToString(format)}%";
+    }
+
+    /// <summary>
+    /// Formats the given integer value as an ordinal string (e.g., 1st, 2nd, 3rd, 4th).
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static string Ordinal(int value)
+    {
+        int absoluteValue = Math.Abs(value);
+        int lastTwoDigits = absoluteValue % 100;
+
+        string suffix = lastTwoDigits switch
+        {
+            11 or 12 or 13 => "th",
+            _ => (absoluteValue % 10) switch
+            {
+                1 => "st",
+                2 => "nd",
+                3 => "rd",
+                _ => "th"
+            }
+        };
+
+        return $"{value}{suffix}";
+    }
+
+    /// <summary>
+    /// Formats a decimal value as a fraction, choosing the smallest denominator
+    /// that provides a sufficiently accurate representation of the value.
+    /// </summary>
+    /// <param name="value">The value to format.</param>
+    /// <returns>The fractional representation of the value.</returns>
+    public static string Fraction(decimal value)
+    {
+        if (value == 0)
+            return "0";
+
+        bool negative = value < 0;
+        value = Math.Abs(value);
+
+        const int MAX_DENOMINATOR = 100000;
+
+        decimal bestDifference = decimal.MaxValue;
+        long bestNumerator = 0;
+        long bestDenominator = 1;
+
+        for (long denominator = 1; denominator <= MAX_DENOMINATOR; denominator++)
+        {
+            long numerator = (long)Math.Round(
+                value * denominator,
+                MidpointRounding.AwayFromZero);
+
+            decimal approximation = (decimal)numerator / denominator;
+            decimal difference = Math.Abs(value - approximation);
+
+            if (difference >= bestDifference)
+                continue;
+
+            bestDifference = difference;
+            bestNumerator = numerator;
+            bestDenominator = denominator;
+
+            if (difference == 0)
+                break;
+        }
+
+        long divisor = GreatestCommonDivisor(
+            Math.Abs(bestNumerator),
+            bestDenominator);
+
+        bestNumerator /= divisor;
+        bestDenominator /= divisor;
+
+        string result = bestDenominator == 1
+            ? bestNumerator.ToString()
+            : $"{bestNumerator}/{bestDenominator}";
+
+        return negative ? $"-{result}" : result;
+    }
+
+    /// <summary>
+    /// Formats a number using scientific notation.
+    /// </summary>
+    /// <param name="value">The value to format.</param>
+    /// <param name="decimals">The number of decimal places to include.</param>
+    /// <returns>The scientific representation of the value.</returns>
+    public static string Scientific(decimal value, int decimals = 2)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(decimals);
+
+        return value.ToString($"E{decimals}");
+    }
+
+    private static long GreatestCommonDivisor(long first, long second)
+    {
+        while (second != 0)
+        {
+            long remainder = first % second;
+            first = second;
+            second = remainder;
+        }
+
+        return Math.Abs(first);
+    }
+
+    public static decimal RoundForDisplay(decimal value, int significantDigits = 2)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(significantDigits);
+
+        if (value == 0)
+            return 0;
+
+        decimal absoluteValue = Math.Abs(value);
+
+        if (absoluteValue >= 1)
+            return Math.Round(value, significantDigits);
+
+        int leadingZeroes = 0;
+        decimal scaled = absoluteValue;
+
+        while (scaled < 1)
+        {
+            scaled *= 10;
+            leadingZeroes++;
+        }
+
+        return Math.Round(value, leadingZeroes + significantDigits - 1);
+    }
 }

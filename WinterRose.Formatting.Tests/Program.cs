@@ -6,6 +6,113 @@ using WinterRose.Formatting.Currency;
 using WinterRose.Formatting.Enums;
 using WinterRose.Formatting.Paths;
 using WinterRose.Formatting.TimeFormats;
+using WinterRose.Formatting.Units;
+
+Temperature celsius = new(25, TemperatureScale.Celsius);
+
+Console.WriteLine($"Original:    {celsius}");
+Console.WriteLine($"Fahrenheit:  {celsius.To(TemperatureScale.Fahrenheit)}");
+Console.WriteLine($"Kelvin:      {celsius.To(TemperatureScale.Kelvin)}");
+Console.WriteLine($"Rankine:     {celsius.To(TemperatureScale.Rankine)}");
+Console.WriteLine($"Newton:      {celsius.To(TemperatureScale.Newton)}");
+
+Console.WriteLine();
+
+Distance distance = new(5, DistanceUnit.Kilometer);
+
+Console.WriteLine($"Distance:      {distance}");
+Console.WriteLine($"Miles:         {distance.To(DistanceUnit.Mile)}");
+Console.WriteLine($"Feet:          {distance.To(DistanceUnit.Foot)}");
+Console.WriteLine($"Nautical miles:{distance.To(DistanceUnit.NauticalMile)}");
+
+Console.WriteLine();
+
+Weight weight = new(80, WeightUnit.Kilogram);
+
+Console.WriteLine($"Weight:        {weight}");
+Console.WriteLine($"Pounds:        {weight.To(WeightUnit.Pound)}");
+Console.WriteLine($"Stone:         {weight.To(WeightUnit.Stone)}");
+Console.WriteLine($"Ounces:        {weight.To(WeightUnit.Ounce)}");
+
+Console.WriteLine();
+
+Volume volume = new(2, VolumeUnit.Liter);
+
+Console.WriteLine($"Volume:        {volume}");
+Console.WriteLine($"US gallons:    {volume.To(VolumeUnit.UsGallon)}");
+Console.WriteLine($"Imperial gal.: {volume.To(VolumeUnit.ImperialGallon)}");
+Console.WriteLine($"US cups:       {volume.To(VolumeUnit.UsCup)}");
+
+Console.WriteLine();
+
+Speed speed = new(100, SpeedUnit.KilometersPerHour);
+
+Console.WriteLine($"Speed:         {speed}");
+Console.WriteLine($"MPH:           {speed.To(SpeedUnit.MilesPerHour)}");
+Console.WriteLine($"Knots:         {speed.To(SpeedUnit.Knots)}");
+Console.WriteLine($"m/s:           {speed.To(SpeedUnit.MetersPerSecond)}");
+
+Temperature fahrenheit = new(32, TemperatureScale.Fahrenheit);
+Console.WriteLine($"32 °F = {fahrenheit.To(TemperatureScale.Celsius)}");
+
+Temperature kelvin = new(373.15m, TemperatureScale.Kelvin);
+Console.WriteLine($"373.15 K = {kelvin.To(TemperatureScale.Celsius)}");
+
+Pressure pressure = new(1, PressureUnit.StandardAtmosphere);
+
+Console.WriteLine($"Pressure:       {pressure}");
+Console.WriteLine($"Pascal:         {pressure.To(PressureUnit.Pascal)}");
+Console.WriteLine($"PSI:            {pressure.To(PressureUnit.Psi)}");
+Console.WriteLine($"Bar:            {pressure.To(PressureUnit.Bar)}");
+Console.WriteLine($"mmHg:           {pressure.To(PressureUnit.MillimeterOfMercury)}");
+
+Console.WriteLine();
+
+Energy energy = new(1, EnergyUnit.KilowattHour);
+
+Console.WriteLine($"Energy:         {energy}");
+Console.WriteLine($"Joules:         {energy.To(EnergyUnit.Joule)}");
+Console.WriteLine($"Megajoules:     {energy.To(EnergyUnit.Megajoule)}");
+Console.WriteLine($"Kilocalories:   {energy.To(EnergyUnit.Kilocalorie)}");
+Console.WriteLine($"BTU:            {energy.To(EnergyUnit.BritishThermalUnit)}");
+
+Console.WriteLine();
+
+Power power = new(100, PowerUnit.Watt);
+
+Console.WriteLine($"Power:          {power}");
+Console.WriteLine($"Kilowatts:      {power.To(PowerUnit.Kilowatt)}");
+Console.WriteLine($"Horsepower:     {power.To(PowerUnit.Horsepower)}");
+Console.WriteLine($"Megawatts:      {power.To(PowerUnit.Megawatt)}");
+
+Console.WriteLine();
+
+Force force = new(1000, ForceUnit.Newton);
+
+Console.WriteLine($"Force:          {force}");
+Console.WriteLine($"Kilonewtons:    {force.To(ForceUnit.Kilonewton)}");
+Console.WriteLine($"Pound-force:    {force.To(ForceUnit.PoundForce)}");
+
+Console.WriteLine();
+
+Torque torque = new(100, TorqueUnit.NewtonMeter);
+
+Console.WriteLine($"Torque:         {torque}");
+Console.WriteLine($"kN·m:           {torque.To(TorqueUnit.KilonewtonMeter)}");
+Console.WriteLine($"lb·ft:          {torque.To(TorqueUnit.PoundFoot)}");
+Console.WriteLine($"lb·in:          {torque.To(TorqueUnit.PoundInch)}");
+
+Console.WriteLine();
+
+Frequency frequency = new(2.4m, FrequencyUnit.Gigahertz);
+
+Console.WriteLine($"Frequency:      {frequency}");
+Console.WriteLine($"MHz:            {frequency.To(FrequencyUnit.Megahertz)}");
+Console.WriteLine($"MHz:            {frequency.To(FrequencyUnit.Megahertz)}");
+Console.WriteLine($"Hz:             {frequency.To(FrequencyUnit.Hertz)}");
+Console.WriteLine($"THz:            {frequency.To(FrequencyUnit.Terahertz)}");
+
+Console.WriteLine();
 
 Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.JapaneseYen));
 Console.WriteLine(CurrencyConverter.Convert(100, Currency.Euro, Currency.UnitedStatesDollar));
